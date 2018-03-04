@@ -30,12 +30,10 @@ public class Sql2oModel implements Model {
           .addParameter("content", content)
           .addParameter("date", new Date())
           .executeUpdate();
-      categories.forEach( (category) -> {
-        connection.createQuery("INSERT into posts_categories(post_uuid, category) VALUES (:post_uuid, :category)")
-            .addParameter("post_uuid", uuid)
-            .addParameter("category", category)
-            .executeUpdate();
-      });
+      categories.forEach( (category) -> connection.createQuery("INSERT into posts_categories(post_uuid, category) VALUES (:post_uuid, :category)")
+          .addParameter("post_uuid", uuid)
+          .addParameter("category", category)
+          .executeUpdate());
 
       connection.commit();
       return uuid;
@@ -44,7 +42,20 @@ public class Sql2oModel implements Model {
 
   @Override
   public UUID createComment(UUID post, String author, String content) {
-    return null;
+    try (Connection connection = sql2o.beginTransaction()) {
+      UUID uuid = uuidGenerator.generate();
+      connection.createQuery("INSERT into comments (comment_uuid, post_uuid, author, content, approved, submission_date) " +
+        "VALUES (:comment_uuid, :post_uuid, :author, :content, :approved, :date)")
+          .addParameter("comment_uuid", uuid)
+          .addParameter("post_uuid", post)
+          .addParameter("author", author)
+          .addParameter("content", content)
+          .addParameter("approved", false)
+          .addParameter("date", new Date())
+          .executeUpdate();
+      connection.commit();
+      return uuid;
+    }
   }
 
   @Override
