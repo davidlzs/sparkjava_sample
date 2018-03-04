@@ -4,38 +4,56 @@ import com.dliu.java8.BlogApplication;
 import com.dliu.model.Model;
 import com.dliu.model.Sql2oModel;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.UUID;
 
 public class Sql2oModule extends AbstractModule {
-
-  private String dbHost = "localhost";
-  private String dbPort = "5432";
-  private String database = "blog";
-  private String dbUsername = "blog_owner";
-  private String dbPassword = "sparkforthewin";
+  private final static Logger LOG = LoggerFactory.getLogger(Sql2oModule.class.getCanonicalName());
 
   @Override
   protected void configure() {
+    try {
+      Properties props = new Properties();
+      try (InputStream stream = this.getClass().getResourceAsStream("/db.properties")) {
+        props.load(stream);
+        Names.bindProperties(binder(), props);
+      }
+    } catch (IOException e) {
+      LOG.error("Could not load config: ", e);
+      System.exit(1);
+    }
     bind(BlogApplication.class).in(Singleton.class);
     bind(UuidGenerator.class).to(RandomUuidGenerator.class);
     bind(Model.class).to(Sql2oModel.class);
   }
 
   @Provides
-  Sql2o provideSql2o() {
-    Sql2o sql2o = new Sql2o("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database +"?autocommit = false",
+  Sql2o provideSql2o(@Named("dbHost") String dbHost,
+                     @Named("dbPort") String dbPort,
+                     @Named("database") String database,
+                     @Named("dbUsername") String dbUsername,
+                     @Named("dbPassword") String dbPassword) {
+
+    return new Sql2o("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database,
         dbUsername, dbPassword, new PostgresQuirks() {
       {
         // make sure we use default UUID converter.
         converters.put(UUID.class, new UUIDConverter());
       }
     });
-    return sql2o;
   }
 }
