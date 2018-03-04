@@ -50,9 +50,15 @@ public class Sql2oModule extends AbstractModule {
                      @Named("dbPassword") String dbPassword) {
 
     HikariConfig hikariConfig = new HikariConfig();
-    hikariConfig.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database);
-    hikariConfig.setUsername(dbUsername);
-    hikariConfig.setPassword(dbPassword);
+    hikariConfig.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
+    hikariConfig.addDataSourceProperty("serverName", dbHost);
+    hikariConfig.addDataSourceProperty("portNumber", dbPort);
+    hikariConfig.addDataSourceProperty("databaseName", database);
+    hikariConfig.addDataSourceProperty("user", dbUsername);
+    hikariConfig.addDataSourceProperty("password", dbPassword);
+//    hikariConfig.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database);
+//    hikariConfig.setUsername(dbUsername);
+//    hikariConfig.setPassword(dbPassword);
 
     DataSource dataSource = new HikariDataSource(hikariConfig);
 
