@@ -53,11 +53,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.sql2o</groupId>
-            <artifactId>sql2o</artifactId>
-            <version>1.5.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4-1201-jdbc41</version>
@@ -84,11 +79,6 @@
             <artifactId>sql2o</artifactId>
             <version>1.5.4</version>
         </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.4.1211</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -109,11 +99,7 @@
                 <version>1.6.0</version>
 
                 <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-classpath</argument>
-                        <argument>com.dliu.java8.BlogApplication</argument>
-                    </arguments>
+                    <mainClass>com.dliu.java8.BlogApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
