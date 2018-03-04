@@ -4,18 +4,19 @@ import com.dliu.java8.BlogApplication;
 import com.dliu.model.Model;
 import com.dliu.model.Sql2oModel;
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sql2o.Sql2o;
 import org.sql2o.converters.UUIDConverter;
 import org.sql2o.quirks.PostgresQuirks;
 
-import java.io.FileInputStream;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -48,8 +49,14 @@ public class Sql2oModule extends AbstractModule {
                      @Named("dbUsername") String dbUsername,
                      @Named("dbPassword") String dbPassword) {
 
-    return new Sql2o("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database,
-        dbUsername, dbPassword, new PostgresQuirks() {
+    HikariConfig hikariConfig = new HikariConfig();
+    hikariConfig.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + database);
+    hikariConfig.setUsername(dbUsername);
+    hikariConfig.setPassword(dbPassword);
+
+    DataSource dataSource = new HikariDataSource(hikariConfig);
+
+    return new Sql2o(dataSource, new PostgresQuirks() {
       {
         // make sure we use default UUID converter.
         converters.put(UUID.class, new UUIDConverter());
