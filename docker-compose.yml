@@ -4,6 +4,10 @@ services:
     build: .
     ports:
      - "8080:4567"
+    depends_on:
+      - "postgres"
+    links:
+      - "postgres"
   postgres:
     image: "postgres:10.3"
     ports:

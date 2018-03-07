@@ -1,9 +1,7 @@
 package com.dliu.java8;
 
-import com.dliu.model.InMemoryModel;
 import com.dliu.model.Model;
 import com.dliu.model.Post;
-import com.dliu.utils.InMemoryModule;
 import com.dliu.utils.Sql2oModule;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,9 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 public class BlogApplication {
   private final static Logger LOG = LoggerFactory.getLogger(BlogApplication.class.getCanonicalName());
