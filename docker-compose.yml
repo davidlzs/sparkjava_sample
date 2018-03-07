@@ -1,0 +1,15 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+     - "8080:4567"
+  postgres:
+    image: "postgres:10.3"
+    ports:
+    - "5432:5432"
+    volumes:
+    - db-data:/var/lib/postgresql/data
+    - ./sql:/docker-entrypoint-initdb.d/
+volumes:
+  db-data:
