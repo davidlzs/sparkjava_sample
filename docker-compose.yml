@@ -4,12 +4,11 @@ services:
     build: .
     ports:
      - "8080:4567"
-    depends_on:
-      - "postgres"
+    restart: always
     links:
       - "postgres"
   postgres:
-    image: "postgres:10.3"
+    image: "postgres:10.3-alpine"
     ports:
     - "5432:5432"
     volumes:
