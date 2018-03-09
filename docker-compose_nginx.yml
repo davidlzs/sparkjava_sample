@@ -9,6 +9,7 @@ services:
       - "443:443"
     volumes:
       - ./site.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl
     networks:
       - front
   web:
